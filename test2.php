@@ -54,13 +54,13 @@ function processSortableQuiz($conn)
             $originalOrder[$row['ma_cau_hoi']][] = $row['thu_tu_dap_an_dung'];
             $correctOrder[$row['ma_cau_hoi']][] = $row['thu_tu_dap_an_dung'];
         }
-        
+
 
         foreach ($_POST as $key => $value) {
             if (strpos($key, 'sortable-list-') === 0) {
                 $questionId = str_replace('sortable-list-', '', $key);
 
-              
+
                 $questionTypeSql = "SELECT loai_cau_hoi FROM cau_hoi WHERE ma_cau_hoi = $questionId";
                 $questionTypeResult = mysqli_query($conn, $questionTypeSql);
 
@@ -68,7 +68,7 @@ function processSortableQuiz($conn)
                     if ($question['loai_cau_hoi'] == 3) {
                         $sortedOrder[$questionId] = explode(',', $value);
 
-                      
+
                         // insertUserAnswer($conn, $questionId, $sortedOrder[$questionId]);
                     }
                 }
@@ -81,7 +81,7 @@ function processSortableQuiz($conn)
         foreach ($originalOrder as $questionId => $originalPositions) {
             $sorted = array_values($sortedOrder[$questionId]);
             $correct = array_values($correctOrder[$questionId]);
-            
+
             if ($sorted !== $correct) {
                 $isSortedCorrectly = false;
                 break;
@@ -130,7 +130,7 @@ function processSortableQuiz($conn)
     } else {
         $formSubmitted = false;
     }
-?>
+    ?>
     <!DOCTYPE html>
     <html lang="en">
 
@@ -221,58 +221,58 @@ function processSortableQuiz($conn)
     <body>
         <div>
             <?php
-        function displaySortableQuestions($conn)
-        {
-            $sql = "SELECT cau_hoi.ma_cau_hoi, cau_hoi.ten_cau_hoi, cau_hoi.hinh_anh, dap_an_sap_xep.ma_da, dap_an_sap_xep.cac_dap_an, dap_an_sap_xep.thu_tu_dap_an_dung
+            function displaySortableQuestions($conn)
+            {
+                $sql = "SELECT cau_hoi.ma_cau_hoi, cau_hoi.ten_cau_hoi, cau_hoi.hinh_anh, dap_an_sap_xep.ma_da, dap_an_sap_xep.cac_dap_an, dap_an_sap_xep.thu_tu_dap_an_dung
                     FROM cau_hoi 
                     LEFT JOIN dap_an_sap_xep ON cau_hoi.ma_cau_hoi = dap_an_sap_xep.ma_cau_hoi
                     WHERE cau_hoi.loai_cau_hoi = 3
                     ORDER BY cau_hoi.ma_cau_hoi, dap_an_sap_xep.ma_da";
-            
-            $result = mysqli_query($conn, $sql);
-            
-            $tenCauHoi = "";
-            $thuTu = 0;
-            
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    if ($tenCauHoi != $row['ten_cau_hoi']) {
-                        echo '<div class="question-container';
-                        if ($row['ma_cau_hoi'] == 1) {
-                            echo ' first-question';
+
+                $result = mysqli_query($conn, $sql);
+
+                $tenCauHoi = "";
+                $thuTu = 0;
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        if ($tenCauHoi != $row['ten_cau_hoi']) {
+                            echo '<div class="question-container';
+                            if ($row['ma_cau_hoi'] == 1) {
+                                echo ' first-question';
+                            }
+                            echo '">';
+                            echo '<div class="question-title">';
+                            echo 'Câu hỏi ' . $row['ma_cau_hoi'] . ': ' . $row['ten_cau_hoi'];
+                            echo '</div>';
+
+                            if (!empty($row['hinh_anh'])) {
+                                echo '<img src="uploadfile/' . $row['hinh_anh'] . '" alt="Hình ảnh câu hỏi">';
+                                echo '<br>';
+                                echo '<br>';
+                            }
+
+                            echo '<ul id="sortable-list-' . $row['ma_cau_hoi'] . '" class="sortable-list">';
+                            $tenCauHoi = $row['ten_cau_hoi'];
+                            $thuTu = 0;
                         }
-                        echo '">';
-                        echo '<div class="question-title">';
-                        echo 'Câu hỏi ' . $row['ma_cau_hoi'] . ': ' . $row['ten_cau_hoi'];
-                        echo '</div>';
-            
-                        if (!empty($row['hinh_anh'])) {
-                            echo '<img src="uploadfile/' . $row['hinh_anh'] . '" alt="Hình ảnh câu hỏi">';
-                            echo '<br>';
-                            echo '<br>';
-                        }
-            
-                        echo '<ul id="sortable-list-' . $row['ma_cau_hoi'] . '" class="sortable-list">';
-                        $tenCauHoi = $row['ten_cau_hoi'];
-                        $thuTu = 0;
+
+                        // Tăng giá trị thứ tự và gán cho ma_da
+                        $thuTu++;
+                        echo '<li class="sortable-item" data-question-id="' . $thuTu . '">' . $row['cac_dap_an'] . '</li>';
                     }
-            
-                    // Tăng giá trị thứ tự và gán cho ma_da
-                    $thuTu++;
-                    echo '<li class="sortable-item" data-question-id="' . $thuTu . '">' . $row['cac_dap_an'] . '</li>';
+                    echo '</ul>';
+                } else {
+                    echo "Không có câu hỏi nào ";
                 }
-                echo '</ul>';
-            } else {
-                echo "Không có câu hỏi nào ";
             }
-        }
-        
-        displaySortableQuestions($conn);
-        
-            
+
+    displaySortableQuestions($conn);
 
 
-            ?>
+
+
+    ?>
         </div>
 
         <form method="post" action="">
@@ -280,64 +280,64 @@ function processSortableQuiz($conn)
        function generateSortableLists($conn)
        {
            $result = mysqli_query($conn, "SELECT ma_cau_hoi FROM cau_hoi");
-       
+
            while ($row = mysqli_fetch_assoc($result)) {
                $orderMapping = [];
                $randomOrder = [];
                $sqlOriginal = "SELECT ma_da FROM dap_an_sap_xep WHERE ma_cau_hoi = " . $row['ma_cau_hoi'] . " ORDER BY RAND()";
                $resultOriginal = mysqli_query($conn, $sqlOriginal);
-       
+
                $thuTu = 0;
-       
+
                while ($rowOriginal = mysqli_fetch_assoc($resultOriginal)) {
                    // Tăng giá trị thứ tự
                    $thuTu++;
-       
+
                    // Lưu giữ giá trị thứ tự tăng dần
                    $orderMapping[$rowOriginal['ma_da']] = $thuTu;
-       
+
                    // Lưu giữ giá trị thứ tự ngẫu nhiên
                    $randomOrder[] = $thuTu;
                }
-       
+
                // Sắp xếp mảng giá trị thứ tự ngẫu nhiên
-            //    shuffle($randomOrder);
-       
+               //    shuffle($randomOrder);
+
                echo '<ul id="sortable-list-' . $row['ma_cau_hoi'] . '" class="sortable-list" style="display: none;" >';
                echo '<input type="hidden" name="sortable-list-' . $row['ma_cau_hoi'] . '" value="' . implode(',', $randomOrder) . '" />';
                echo '</ul>';
            }
        }
-         
-           
-           generateSortableLists($conn);
-           
-            ?>
+
+
+    generateSortableLists($conn);
+
+    ?>
 
             <?php
-            function generateSubmitButton($formSubmitted)
-            {
-                echo '<div class="submit-container">';
+    function generateSubmitButton($formSubmitted)
+    {
+        echo '<div class="submit-container">';
 
-                if (!$formSubmitted) {
-                    echo '<input type="submit" value="Xác nhận" name="xacnhan" class="btn btn-primary">';
-                } else {
-                    echo '<input type="submit" value="Làm Lại" name="lamlai" class="btn btn-primary" onclick="reloadPage();">';
-                }
+        if (!$formSubmitted) {
+            echo '<input type="submit" value="Xác nhận" name="xacnhan" class="btn btn-primary">';
+        } else {
+            echo '<input type="submit" value="Làm Lại" name="lamlai" class="btn btn-primary" onclick="reloadPage();">';
+        }
 
-                echo '</div>';
-            }
+        echo '</div>';
+    }
 
-            generateSubmitButton($formSubmitted);
-            ?>
+    generateSubmitButton($formSubmitted);
+    ?>
 
         </form>
 
         <script>
             <?php
-            $result = mysqli_query($conn, "SELECT ma_cau_hoi FROM cau_hoi");
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo 'new Sortable(document.getElementById("sortable-list-' . $row['ma_cau_hoi'] . '"), {
+    $result = mysqli_query($conn, "SELECT ma_cau_hoi FROM cau_hoi");
+    while ($row = mysqli_fetch_assoc($result)) {
+        echo 'new Sortable(document.getElementById("sortable-list-' . $row['ma_cau_hoi'] . '"), {
                 animation: 150,
                 ghostClass: "sortable-ghost",
                 chosenClass: "sortable-chosen",
@@ -347,8 +347,8 @@ function processSortableQuiz($conn)
                     updateSortableListOrder("sortable-list-' . $row['ma_cau_hoi'] . '");
                 },
             });';
-            }
-            ?>
+    }
+    ?>
 
             function updateSortableListOrder(listId) {
                 var sortedItems = [];
@@ -390,16 +390,16 @@ function saveScoreToDatabase($conn, $userScore, $userId)
 }
 function insertUserAnswer($conn, $questionId, $sortedOrder)
 {
-    $userId = 1; 
+    $userId = 1;
     $incorrectAnswerCount = count(array_diff($sortedOrder, range(1, count($sortedOrder))));
 
-    
+
     $checkSql = "SELECT id_user_answer FROM user_answers WHERE ma_cau_hoi = $questionId AND id_user = $userId";
     $checkResult = mysqli_query($conn, $checkSql);
 
     if ($checkResult) {
         if (mysqli_num_rows($checkResult) > 0) {
-            
+
             $updateSql = "UPDATE user_answers SET so_lan_tra_loi_sai = so_lan_tra_loi_sai + 1 WHERE ma_cau_hoi = $questionId AND id_user = $userId";
             $updateResult = mysqli_query($conn, $updateSql);
 
@@ -409,7 +409,7 @@ function insertUserAnswer($conn, $questionId, $sortedOrder)
             //     echo "Record updated successfully!";
             // }
         } else {
-            
+
             $insertSql = "INSERT INTO user_answers (ma_cau_hoi, id_user, so_lan_tra_loi_sai) VALUES ($questionId, $userId, 1)";
             $insertResult = mysqli_query($conn, $insertSql);
 
@@ -437,7 +437,7 @@ function saveUserAnswersToDatabase($conn, $sortedOrder, $userId)
 
         if ($checkResult) {
             if (mysqli_num_rows($checkResult) > 0) {
-                
+
                 $existingRecord = mysqli_fetch_assoc($checkResult);
                 $currentIncorrectCount = $existingRecord['so_lan_tra_loi_sai'];
                 $newIncorrectCount = $currentIncorrectCount + $incorrectAnswerCount;
@@ -512,7 +512,7 @@ function insertCorrectAnswers($conn, $sortedOrder, $userId)
         foreach ($maDaArray as $position => $maDa) {
             // Use the user's selected positions starting from 1
             $userAnswerPosition = $userAnswerPositions[$position] ?? null;
-            
+
             // Check if the user provided a position for the current answer
             if ($userAnswerPosition !== null) {
                 $values[] = "($questionId, $userId, '$maDa', $userAnswerPosition)";
