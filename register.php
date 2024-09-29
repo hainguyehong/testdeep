@@ -18,27 +18,35 @@
                 <form class="register-form" method="post">
                     <div class="mb-3">
                         <label for="name" class="form-label"><span style="color: red;">*</span>Họ Tên</label>
-                        <input type="text" class="form-control" id="username" name="ten_sv" value="<?php if (isset($_POST['ten_sv'])) echo $_POST['ten_sv']; ?>" required>
+                        <input type="text" class="form-control" id="username" name="ten_sv" value="<?php if (isset($_POST['ten_sv'])) {
+                            echo $_POST['ten_sv'];
+                        } ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label"><span style="color: red;">*</span>Email</label>
-                        <input type="email" class="form-control" id="email" name="email" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>" required>
+                        <input type="email" class="form-control" id="email" name="email" value="<?php if (isset($_POST['email'])) {
+                            echo $_POST['email'];
+                        } ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label"><span style="color: red;">*</span>Mật Khẩu</label>
-                        <input type="password" class="form-control" id="password" name="password" value="<?php if (isset($_POST['sb'])) echo $_POST['password']; ?>" required>
+                        <input type="password" class="form-control" id="password" name="password" value="<?php if (isset($_POST['sb'])) {
+                            echo $_POST['password'];
+                        } ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label"><span style="color: red;">*</span>Nhập Lại Mật Khẩu</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" value="<?php if (isset($_POST['sb'])) echo $_POST['confirmPassword']; ?>" required>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" value="<?php if (isset($_POST['sb'])) {
+                            echo $_POST['confirmPassword'];
+                        } ?>" required>
                     </div>
                     <?php
-                    if (isset($_POST['sb'])) {                        
+                    if (isset($_POST['sb'])) {
                         $ten = $_POST['ten_sv'];
-                        $email = $_POST['email'];                        
+                        $email = $_POST['email'];
                         $mk = $_POST['password'];
                         $mk1 = $_POST['confirmPassword'];
-                      
+
                         $kiemtraAdmin = "SELECT * FROM `user` WHERE ten_sv = 'admin'";
                         $result = mysqli_query($conn, $kiemtraAdmin);
                         if (mysqli_num_rows($result) === 0) {
@@ -57,7 +65,7 @@
                             // kiểm tra tồn tại
                             if (mysqli_num_rows($result1) > 0) {
                                 echo "Tài khoản đã tồn tại";
-                            } else if (mysqli_num_rows($result2) > 0) {
+                            } elseif (mysqli_num_rows($result2) > 0) {
                                 echo "Email đã được đăng ký";
                             } else {
                                 // nhập thông tin đăng ký vào cơ sở dữ liệu
@@ -70,7 +78,7 @@
                             }
                         }
                     }
-                    ?>
+    ?>
                     <div class="d-grid mb-3">
                         <input type="submit" class="btn btn-primary" name="sb" value="Đăng Ký">
                     </div>

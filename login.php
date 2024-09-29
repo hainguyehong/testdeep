@@ -17,36 +17,40 @@
                 <form class="login-form" method="POST">
                     <div class="mb-3">
                         <label for="username" class="form-label">Tài khoản</label>
-                        <input type="text" class="form-control" id="username" name="tk" value="<?php if (isset($_POST['tk'])) echo $_POST['tk']; ?>" required>
+                        <input type="text" class="form-control" id="username" name="tk" value="<?php if (isset($_POST['tk'])) {
+                            echo $_POST['tk'];
+                        } ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Mật khẩu</label>
-                        <input type="password" class="form-control" id="password" name="password" value="<?php if (isset($_POST['password'])) echo $_POST['password']; ?>" required>
+                        <input type="password" class="form-control" id="password" name="password" value="<?php if (isset($_POST['password'])) {
+                            echo $_POST['password'];
+                        } ?>" required>
                     </div>
                     <?php
                     include './function.php';
-                    $tk = isset($_POST['tk']) ? $_POST['tk'] : '';
-                    $mk = isset($_POST['password']) ? $_POST['password'] : '';
-                    if (isset($_POST['sb'])) {
-                        $kiemtraAdmin = "SELECT * FROM `user` WHERE ten_sv = 'admin'";
-                        $result = mysqli_query($conn, $kiemtraAdmin);
-                        if (mysqli_num_rows($result) == 0) {
-                            $sqlAdmin = "INSERT INTO `user`(`id_user`, `ten_sv`, `email`, `mat_khau`) VALUES (null,'Admin','parkchoahyun@gmail.com','c4ca4238a0b923820dcc509a6f75849b')";
-                            mysqli_query($conn, $sqlAdmin);
-                        }
-                        if (!empty($tk) && !empty($mk)) {
-                            if (checkLogin($conn, $tk, md5($mk))) {
-                                if (isset($_SESSION['role']) && $_SESSION['role'] == 0) {
-                                    header('Location: index.php');
-                                } else{
-                                header('Location: show.php');
+                        $tk = isset($_POST['tk']) ? $_POST['tk'] : '';
+                        $mk = isset($_POST['password']) ? $_POST['password'] : '';
+                        if (isset($_POST['sb'])) {
+                            $kiemtraAdmin = "SELECT * FROM `user` WHERE ten_sv = 'admin'";
+                            $result = mysqli_query($conn, $kiemtraAdmin);
+                            if (mysqli_num_rows($result) == 0) {
+                                $sqlAdmin = "INSERT INTO `user`(`id_user`, `ten_sv`, `email`, `mat_khau`) VALUES (null,'Admin','parkchoahyun@gmail.com','c4ca4238a0b923820dcc509a6f75849b')";
+                                mysqli_query($conn, $sqlAdmin);
+                            }
+                            if (!empty($tk) && !empty($mk)) {
+                                if (checkLogin($conn, $tk, md5($mk))) {
+                                    if (isset($_SESSION['role']) && $_SESSION['role'] == 0) {
+                                        header('Location: index.php');
+                                    } else {
+                                        header('Location: show.php');
+                                    }
+                                } else {
+                                    echo '<div class="alert alert-danger text-center" role="alert">Tài khoản hoặc mật khẩu không chính xác</div>';
                                 }
-                            } else {
-                                echo '<div class="alert alert-danger text-center" role="alert">Tài khoản hoặc mật khẩu không chính xác</div>';
                             }
                         }
-                    }
-                    ?>
+                        ?>
                     <div class="d-grid mb-3">
                         <input type="submit" class="btn btn-primary" name="sb" value="Đăng Nhập">
                     </div>
